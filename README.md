@@ -11,3 +11,6 @@ Processes all data in /rawData and generates a new JSON file. Usefull when proce
 
  - loggerConfig.py
 I used the python logger to send myself an email when an error ocurrs. This file configures this and other log options.
+
+Requeriments:
+Python3 and BeautifulSoup4
