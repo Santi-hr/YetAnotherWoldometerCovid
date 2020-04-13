@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 from collections import defaultdict
 import logging
+import re
 
 def helper_convert_to_num(input_text):
     """Sanitizes the text input from the html to ensure proper conversion and converts it"""
@@ -9,10 +10,11 @@ def helper_convert_to_num(input_text):
     input_text = input_text.replace('   ', '')
     input_text = input_text.replace(',', '')
     if input_text is not '':
-        if '.' in input_text:
-            output_num = float(input_text)
-        else:
-            output_num = int(input_text)
+        if re.match("\d*\.?\d+\Z", input_text): # Prevent anything not number shaped to be casted
+            if '.' in input_text:
+                output_num = float(input_text)
+            else:
+                output_num = int(input_text)
 
     return output_num
 
