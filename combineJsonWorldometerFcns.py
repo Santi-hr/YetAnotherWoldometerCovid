@@ -39,6 +39,8 @@ def combine_worldometer_dicts(dict_combined, dict_to_append, dict_datetime):
         aux_append_if_key(dict_combined, dict_to_append, key_country, "Tests_per_1M")
         if "Continent" in dict_to_append[key_country]:
             dict_combined[key_country]["Continent"] = dict_to_append[key_country]["Continent"]
+        if "Population" in dict_to_append[key_country]:
+            dict_combined[key_country]["Population"] = dict_to_append[key_country]["Population"]
 
 
 def append_worldometer_into_output_json(dict_to_append, dict_datetime):
