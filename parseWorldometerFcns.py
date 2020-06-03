@@ -258,6 +258,33 @@ def extract_data_15_columns(main_table, row_expected_len):
     return dict_raw_data
 
 
+def extract_data_19_columns(main_table, row_expected_len):
+    """Extracts data into a dict from a Worldometer table with 19 columns"""
+    main_table_rows = main_table.find_all("tr")
+    dict_empty = {"Total_cases": 0, "Total_deaths": 0, "Total_recovered": 0, "Active_cases": 0, "Serious_cases": 0,
+                  "Cases_per_1M": 0, "Deaths_per_1M": 0, "Total_Tests": 0, "Tests_per_1M": 0, "Continent": "",
+                  "Population": 0}
+    dict_raw_data = defaultdict(lambda: dict_empty.copy())
+
+    for i in range(len(main_table_rows)):
+        row_data = main_table_rows[i].find_all("td")
+        if len(row_data) == row_expected_len:
+            country_name = helper_format_country_name(row_data[1].text)
+            dict_raw_data[country_name]["Total_cases"] = helper_convert_to_num(row_data[2].text)
+            dict_raw_data[country_name]["Total_deaths"] = helper_convert_to_num(row_data[4].text)
+            dict_raw_data[country_name]["Total_recovered"] = helper_convert_to_num(row_data[6].text)
+            dict_raw_data[country_name]["Active_cases"] = helper_convert_to_num(row_data[8].text)
+            dict_raw_data[country_name]["Serious_cases"] = helper_convert_to_num(row_data[9].text)
+            dict_raw_data[country_name]["Cases_per_1M"] = helper_convert_to_num(row_data[10].text)
+            dict_raw_data[country_name]["Deaths_per_1M"] = helper_convert_to_num(row_data[11].text)
+            dict_raw_data[country_name]["Total_Tests"] = helper_convert_to_num(row_data[12].text)
+            dict_raw_data[country_name]["Tests_per_1M"] = helper_convert_to_num(row_data[13].text)
+            dict_raw_data[country_name]["Population"] = helper_convert_to_num(row_data[14].text)
+            dict_raw_data[country_name]["Continent"] = row_data[15].text
+
+    return dict_raw_data
+
+
 def extract_dict_from_worldometer_html(raw_html_data):
     """Extracts data from the Worldometer/coronavirus html"""
     logger = logging.getLogger("Main")
@@ -282,7 +309,6 @@ def extract_dict_from_worldometer_html(raw_html_data):
 
         # for key_i in range(len(main_table_column_titles)):
         #     print(main_table_column_titles[key_i].text)
-
 
         if len(main_table_column_titles) == 4:
             # First table
@@ -316,6 +342,9 @@ def extract_dict_from_worldometer_html(raw_html_data):
         elif len(main_table_column_titles) == 15:
             # 15 includes # and Population
             dict_raw_data = extract_data_15_columns(main_table, len(main_table_column_titles))
+        elif len(main_table_column_titles) == 19:
+            # 19 includes New Recovered and 1 Case/Death/Test per people
+            dict_raw_data = extract_data_19_columns(main_table, len(main_table_column_titles))
         else:
             logger.warning("Unrecognized table. Len: %d", len(main_table_column_titles))
     else:
